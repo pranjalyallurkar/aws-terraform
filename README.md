@@ -1,7 +1,7 @@
 # aws-terraform
 
 
-###  IAM
+# IAM
 terraform {
   required_providers {
     aws = {
@@ -15,7 +15,7 @@ provider "aws" {
   region = "ap-south-1"
 }
 
-# Create IAM User
+#### Create IAM User
 resource "aws_iam_user" "my_user" {
   name = "terraform-practice-user"
 
@@ -25,7 +25,7 @@ resource "aws_iam_user" "my_user" {
   }
 }
 
-# Attach Read-Only S3 Policy
+#### Attach Read-Only S3 Policy
 resource "aws_iam_user_policy_attachment" "s3_readonly" {
   user = aws_iam_user.my_user.name
 
@@ -42,7 +42,7 @@ output "attached_policy" {
 
 
 
-### S3
+# S3
 
 
 terraform {
@@ -54,12 +54,12 @@ terraform {
   }
 }
 
-# AWS Provider
+#### AWS Provider
 provider "aws" {
   region = "ap-south-1"
 }
 
-# Create S3 Bucket
+#### Create S3 Bucket
 resource "aws_s3_bucket" "my_bucket" {
   bucket = "pranjal-terraform-demo-2026-unique123"
 
@@ -69,7 +69,7 @@ resource "aws_s3_bucket" "my_bucket" {
   }
 }
 
-# Block public access
+#### Block public access
 resource "aws_s3_bucket_public_access_block" "my_bucket_access" {
   bucket = aws_s3_bucket.my_bucket.id
 
@@ -79,7 +79,7 @@ resource "aws_s3_bucket_public_access_block" "my_bucket_access" {
   restrict_public_buckets = true
 }
 
-# Enable versioning
+#### Enable versioning
 resource "aws_s3_bucket_versioning" "my_bucket_versioning" {
   bucket = aws_s3_bucket.my_bucket.id
 
@@ -88,20 +88,20 @@ resource "aws_s3_bucket_versioning" "my_bucket_versioning" {
   }
 }
 
-# Output bucket name
+#### Output bucket name
 output "bucket_name" {
   description = "S3 bucket name"
   value       = aws_s3_bucket.my_bucket.id
 }
 
-# Output bucket ARN
+#### Output bucket ARN
 output "bucket_arn" {
   description = "S3 bucket ARN"
   value       = aws_s3_bucket.my_bucket.arn
 }
 
 
-### VPC 
+# VPC 
 
 terraform {
   required_providers {
@@ -116,7 +116,7 @@ provider "aws" {
   region = "ap-south-1"
 }
 
-# Create VPC
+#### Create VPC
 resource "aws_vpc" "my_vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_support   = true
@@ -127,7 +127,7 @@ resource "aws_vpc" "my_vpc" {
   }
 }
 
-# Create Public Subnet
+#### Create Public Subnet
 resource "aws_subnet" "public_subnet" {
   vpc_id                  = aws_vpc.my_vpc.id
   cidr_block              = "10.0.1.0/24"
@@ -139,7 +139,7 @@ resource "aws_subnet" "public_subnet" {
   }
 }
 
-# Internet Gateway
+#### Internet Gateway
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.my_vpc.id
 
@@ -148,7 +148,7 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-# Route Table
+#### Route Table
 resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.my_vpc.id
 
@@ -162,7 +162,7 @@ resource "aws_route_table" "public_rt" {
   }
 }
 
-# Associate Route Table with Subnet
+#### Associate Route Table with Subnet
 resource "aws_route_table_association" "public_assoc" {
   subnet_id      = aws_subnet.public_subnet.id
   route_table_id = aws_route_table.public_rt.id
@@ -177,7 +177,7 @@ output "subnet_id" {
 }
 
 
-### EC2
+# EC2
 
 terraform {
   required_providers {
@@ -188,12 +188,12 @@ terraform {
   }
 }
 
-# AWS Provider
+#### AWS Provider
 provider "aws" {
   region = "ap-south-1"
 }
 
-# Find the latest Ubuntu 24.04 LTS AMI
+#### Find the latest Ubuntu 24.04 LTS AMI
 data "aws_ami" "ubuntu" {
   most_recent = true
   owners      = ["099720109477"]
@@ -214,12 +214,12 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-# Default VPC
+#### Default VPC
 data "aws_vpc" "default" {
   default = true
 }
 
-# Security Group
+#### Security Group
 resource "aws_security_group" "ubuntu_sg" {
   name        = "ubuntu-terraform-sg"
   description = "Allow SSH access to Ubuntu EC2"
@@ -245,7 +245,7 @@ resource "aws_security_group" "ubuntu_sg" {
   }
 }
 
-# Create EC2 Instance
+#### Create EC2 Instance
 resource "aws_instance" "ubuntu_vm" {
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = "t3.micro"
@@ -264,13 +264,13 @@ resource "aws_instance" "ubuntu_vm" {
   }
 }
 
-# Output Instance ID
+#### Output Instance ID
 output "instance_id" {
   description = "EC2 instance ID"
   value       = aws_instance.ubuntu_vm.id
 }
 
-# Output Public IP
+#### Output Public IP
 output "public_ip" {
   description = "Public IP address of the EC2 instance"
   value       = aws_instance.ubuntu_vm.public_ip
